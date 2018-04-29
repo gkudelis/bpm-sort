@@ -1,4 +1,4 @@
-$("#auth").click(auth)
+$("#auth").click(auth);
 
 function auth() {
     console.log("starting auth");
