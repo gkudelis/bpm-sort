@@ -1,5 +1,3 @@
-$("#auth").click(auth)
-
 function auth() {
     var redirect_url = "https://accounts.spotify.com/authorize";
     redirect_url += "?client_id=5c249e8331d248ca9b95ade12e7e0c4b";
@@ -10,3 +8,5 @@ function auth() {
 
     window.location.replace(redirect_url);
 }
+
+$("#auth").click(auth)
