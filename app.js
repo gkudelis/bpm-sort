@@ -1,6 +1,8 @@
 $("#auth").click(auth)
 
 function auth() {
+    console.log("starting auth");
+
     var redirect_url = "https://accounts.spotify.com/authorize";
     redirect_url += "?client_id=5c249e8331d248ca9b95ade12e7e0c4b";
     redirect_url += "&response_type=token";
