@@ -10,18 +10,3 @@ function auth() {
 
     window.location.replace(redirect_url);
 }
-
-function handle_user_profile(response) {
-    console.log(response);
-}
-
-qs = new URLSearchParams(window.location.search);
-if (qs.has('access_token')) {
-    var access_token = qs.get('access_token');
-
-    $.ajax({
-        url: 'https://api.spotify.com/v1/me',
-        headers: { 'Authorization': 'Bearer ' + access_token },
-        success: handle_user_profile
-    });
-}
