@@ -16,7 +16,7 @@ $(function() {
         console.log(response);
     }
 
-    qs = new URLSearchParams(window.location.search);
+    qs = new URLSearchParams(window.location.hash.substring(1));
     if (qs.has('access_token')) {
         var access_token = qs.get('access_token');
         $.ajax({
