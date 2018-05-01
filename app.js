@@ -8,7 +8,7 @@ $(function() {
 
         get_playlists()
             .then(get_playlist_names)
-            .then(handle_playlists);
+            .then(put_playlists_in_select);
 
         $("#sort").click(sort_playlist);
     } else {
@@ -50,7 +50,7 @@ $(function() {
         return wait_for_promises(playlist_promises);
     }
 
-    function handle_playlists(playlist_data) {
+    function put_playlists_in_select(playlist_data) {
         console.log(playlist_data);
         var content = playlist_data.reduce(function(acc, playlist) {
             return acc + "<option value='"+playlist.id+"'>"+playlist.name+"</option>";
