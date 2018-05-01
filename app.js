@@ -3,12 +3,14 @@ $(function() {
     if (qs.has('access_token')) {
         var access_token = qs.get('access_token');
 
-        $("#playlists").show();
+        $("#playlist").show();
         $("#sort").show();
 
         get_playlists()
             .then(get_playlist_names)
             .then(handle_playlists);
+
+        $("#sort").click(sort_playlist);
     } else {
         $("#auth")
             .click(auth)
@@ -42,7 +44,6 @@ $(function() {
                 headers: { 'Authorization': 'Bearer ' + access_token },
             }).then(function(playlist_details) {
                 playlist.name = playlist_details.name;
-                console.log(playlist);
                 return playlist;
             });
         });
@@ -51,6 +52,14 @@ $(function() {
 
     function handle_playlists(playlist_data) {
         console.log(playlist_data);
+        var content = playlist_data.reduce(function(acc, playlist) {
+            return acc + "<option value='"+playlist.id+"'>"+playlist.name+"</option>";
+        }, '');
+        $("#playlist").append(content);
+    }
+
+    function sort_playlist() {
+        console.log("Would sort playlist: " + $("#playlist").val());
     }
 
     function wait_for_promises(promises) {
