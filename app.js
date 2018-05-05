@@ -1,20 +1,20 @@
-$(function() {
+function app() {
     qs = new URLSearchParams(window.location.hash.substring(1));
     if (qs.has('access_token')) {
         var access_token = qs.get('access_token');
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
 
-        $("#playlist").show();
-        $("#sort").show();
+        ø("playlist").style.display = "initial";
+        ø("sort").style.display = "initial";
 
         get_playlists()
             .then(get_playlist_names)
             .then(put_playlists_in_select);
 
-        $("#sort").click(sort_playlist);
+        ø("sort").onclick = sort_playlist;
     } else {
-        $("#auth")
-            .click(auth)
-            .show();
+        ø("auth").onclick = auth;
+        ø("auth").display = "initial";
     }
 
     function auth() {
@@ -31,40 +31,37 @@ $(function() {
     }
 
     function get_playlists() {
-        return $.ajax({
-            url: 'https://api.spotify.com/v1/me/playlists',
-            headers: { 'Authorization': 'Bearer ' + access_token },
-        });
+        return axios
+            .get('https://api.spotify.com/v1/me/playlists')
+            .then(function (response) {
+                return response.data.items;
+            }).catch(clog);
     }
 
-    function get_playlist_names(playlist_data) {
-        var playlist_promises = playlist_data.items.map(function(playlist) {
-            return $.ajax({
-                url: playlist.href,
-                headers: { 'Authorization': 'Bearer ' + access_token },
-            }).then(function(playlist_details) {
-                playlist.name = playlist_details.name;
-                return playlist;
-            });
+    function get_playlist_names(playlists) {
+        var playlist_promises = playlists.map(function(playlist) {
+            return axios
+                .get(playlist.href)
+                .then(function (response) {
+                    playlist.name = response.data.name;
+                    return playlist;
+                }).catch(clog);
         });
-        return wait_for_promises(playlist_promises);
+        return Promise.all(playlist_promises);
     }
 
-    function put_playlists_in_select(playlist_data) {
-        console.log(playlist_data);
-        var content = playlist_data.reduce(function(acc, playlist) {
+    function put_playlists_in_select(playlists) {
+        console.log(playlists);
+        var content = playlists.reduce(function(acc, playlist) {
             return acc + "<option value='"+playlist.id+"'>"+playlist.name+"</option>";
         }, '');
-        $("#playlist").append(content);
+        ø("playlist").innerHTML = content;
     }
 
     function sort_playlist() {
-        console.log("Would sort playlist: " + $("#playlist").val());
+        console.log("Would sort playlist: " + ø("playlist").value);
     }
 
-    function wait_for_promises(promises) {
-        return $.when.apply($, promises).then(collect_to_array);
-    }
-
-    function collect_to_array() { return Array.prototype.slice.call(arguments); }
-});
+    function ø(id) { return document.getElementById(id); }
+    function clog(stuff) { console.log(stuff); }
+}
