@@ -8,13 +8,12 @@ function app() {
         ø("sort").style.display = "initial";
 
         get_playlists()
-            .then(get_playlist_names)
             .then(put_playlists_in_select);
 
         ø("sort").onclick = sort_playlist;
     } else {
         ø("auth").onclick = auth;
-        ø("auth").display = "initial";
+        ø("auth").style.display = "initial";
     }
 
     function auth() {
@@ -33,27 +32,14 @@ function app() {
     function get_playlists() {
         return axios
             .get('https://api.spotify.com/v1/me/playlists')
-            .then(function (response) {
-                return response.data.items;
+            .then(function(response) {
+                return Immutable.fromJS(response.data.items);
             }).catch(clog);
     }
 
-    function get_playlist_names(playlists) {
-        var playlist_promises = playlists.map(function(playlist) {
-            return axios
-                .get(playlist.href)
-                .then(function (response) {
-                    playlist.name = response.data.name;
-                    return playlist;
-                }).catch(clog);
-        });
-        return Promise.all(playlist_promises);
-    }
-
     function put_playlists_in_select(playlists) {
-        console.log(playlists);
         var content = playlists.reduce(function(acc, playlist) {
-            return acc + "<option value='"+playlist.id+"'>"+playlist.name+"</option>";
+            return acc + "<option value='"+playlist.get("id")+"'>"+playlist.get("name")+"</option>";
         }, '');
         ø("playlist").innerHTML = content;
     }
